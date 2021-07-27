@@ -71,7 +71,7 @@ vector<int> LinuxParser::Pids() {
 // TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { 
   string key;
-  float memtotal, memfree, value;
+  float memTotal, memFree, value;
   string unit;
   string line;
   std::ifstream stream(kProcDirectory + kMeminfoFilename);
@@ -80,10 +80,10 @@ float LinuxParser::MemoryUtilization() {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
-        if (key == "MemTotal") memtotal = value;
+        if (key == "MemTotal") memTotal = value;
         if (key == "MemFree") {
-          memfree = value;
-          return (memtotal - memfree) / memtotal; 
+          memFree = value;
+          return (memTotal - memFree) / memTotal; 
         }
       }
     }
@@ -137,7 +137,7 @@ long LinuxParser::ActiveJiffies(int pid) {
       else if (i == 16) cutime = std::stol(value);
       else if (i == 17) cstime = std::stol(value);
     }
-    return utime + stime + cutime + cstime;
+    return utime + stime;
   }
   return 0; 
 }
@@ -259,7 +259,7 @@ string LinuxParser::Ram(int pid) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       linestream >> key >> value;
-      if (key == "VmSize") {
+      if (key == "VmRSS") { // VmRss is the exact physical memory being used as a part of Physical RAM
         long temp = std::stol(value);
         temp /= 1000;
         return to_string(temp);

@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <time.h>
+#include <unistd.h>
 
 #include "process.h"
 #include "linux_parser.h"
@@ -18,27 +18,22 @@ Process::Process(int pid) : pid_(pid){};
 // TODO: Return this process's ID
 int Process::Pid() { return pid_; }
 
-// Previous CPU values for this process
-float prev_Active = 0; // in jiffies
-float prev_elapsed_time = 0; // in seconds
-float prev_CPU_perc = 0;
-
 // TODO: Return this process's CPU utilization
 float Process::CpuUtilization() { 
   float Active; // in jiffies
   float elapsed_time; // in seconds
   
   Active = LinuxParser::ActiveJiffies(pid_);
-  elapsed_time = LinuxParser::UpTime() - LinuxParser::UpTime() / CLOCKS_PER_SEC;
+  elapsed_time = LinuxParser::UpTime() - LinuxParser::UpTime(pid_) / sysconf(_SC_CLK_TCK);
   
   // calculate difference between current and old CPU values
   float Active_d = Active - prev_Active;
   float elapsed_time_d = elapsed_time - prev_elapsed_time;
     
-  // Calculate CPU utilisation if elapsed_time_d > 0
-  if( elapsed_time_d > 0) {
+  // Calculate CPU utilisation if elapsed_time_d > 1 secs
+  if( elapsed_time_d > 1 && Active_d > 0) {
     float CPU_perc;
-    CPU_perc = (Active_d / CLOCKS_PER_SEC) / elapsed_time_d;
+    CPU_perc = (Active_d / sysconf(_SC_CLK_TCK)) / elapsed_time_d;
     
     // Set current CPU values to previous
     prev_Active = Active;
@@ -53,22 +48,25 @@ float Process::CpuUtilization() {
   return prev_CPU_perc; 
 }
 
-string command = ""; // cache for command
+
 
 // TODO: Return the command that generated this process
 string Process::Command() { 
-  if(command == "") command = LinuxParser::Command(pid_);
+  if(command == "") {
+    command = LinuxParser::Command(pid_);
+    if (command.size() > 40) {
+      command.erase(command.begin()+40, command.end());
+      command.append("...");
+    }
+  }
   return command; 
 }
 
 
 // TODO: Return this process's memory utilization
 string Process::Ram() { 
-  ram = std::stoi(LinuxParser::Ram(pid_));
-  return to_string(ram); 
+  return LinuxParser::Ram(pid_); 
 }
-
-string username = ""; // cache for username
 
 // TODO: Return the user (name) that generated this process
 string Process::User() { 
@@ -77,10 +75,12 @@ string Process::User() {
 }
 
 // TODO: Return the age of this process (in seconds)
-long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
+long int Process::UpTime() { 
+  return LinuxParser::UpTime() - LinuxParser::UpTime(pid_) / sysconf(_SC_CLK_TCK); 
+}
 
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const { 
-  return (cpuUti < a.cpuUti) ? true : false; 
+  return a.cpuUti < cpuUti; 
 }

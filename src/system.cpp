@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm> 
 
 #include "process.h"
 #include "processor.h"
@@ -24,10 +25,10 @@ Processor& System::Cpu() {
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() { 
   vector<int> pids = LinuxParser::Pids();
-  for(int pid : pids) {
-    Process process(pid);
-    processes_.push_back(process);
+  for(const int & pid : pids) {
+    processes_.emplace_back(pid);
   }
+  std::sort(processes_.begin(), processes_.end());
   return processes_; 
 }
 
