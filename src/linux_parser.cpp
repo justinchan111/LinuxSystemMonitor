@@ -124,7 +124,7 @@ long LinuxParser::Jiffies() {
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::ActiveJiffies(int pid) { 
   string value;
-  long int utime, stime, cutime, cstime;
+  long int utime, stime;
   string line;
   std::ifstream stream (kProcDirectory + to_string(pid) + kStatFilename);
   if (stream.is_open()){
@@ -134,8 +134,6 @@ long LinuxParser::ActiveJiffies(int pid) {
       linestream >> value;
       if (i == 14) utime = std::stol(value);
       else if (i == 15) stime = std::stol(value);
-      else if (i == 16) cutime = std::stol(value);
-      else if (i == 17) cstime = std::stol(value);
     }
     return utime + stime;
   }
