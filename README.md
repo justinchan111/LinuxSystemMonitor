@@ -1,11 +1,10 @@
 # CppND-System-Monitor
 
-This repo contains the code for a System Monitor, which displays dynamic system and process information as seen in the snapshot below. 
+This repo contains the code for a System Monitor, which displays dynamic system and process information as seen in the snapshot below.
 
-## Udacity Linux Workspace
-[Udacity](https://www.udacity.com/) provides a browser-based Linux [Workspace](https://engineering.udacity.com/creating-a-gpu-enhanced-virtual-desktop-for-udacity-497bdd91a505) for students. 
+<img src="Example.png" height="450" />
 
-You are welcome to develop this project on your local machine, and you are not required to use the Udacity Workspace. However, the Workspace provides a convenient and consistent Linux development environment we encourage you to try.
+Only to be used for Linux operating systems.
 
 ## ncurses
 [ncurses](https://www.gnu.org/software/ncurses/) is a library that facilitates text-based graphical output in the terminal. This project relies on ncurses for display output.
