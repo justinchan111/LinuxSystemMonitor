@@ -2,7 +2,7 @@
 
 This repo contains the code for a System Monitor, which displays dynamic system and process information as seen in the snapshot below.
 
-<img src="Example.png" height="450" />
+<img src="Example.PNG" height="450" />
 
 Only to be used for Linux operating systems.
 
